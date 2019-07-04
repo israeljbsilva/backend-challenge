@@ -7,6 +7,7 @@ from rest_framework import viewsets
 
 from .models import Person, Pet
 from .serializers import PersonSerializer, PetSerializer, PetListSerializer
+from .pagination import DefaultPagination
 
 
 def ping(request):
@@ -21,11 +22,13 @@ def ping(request):
 class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     queryset = Person.objects.all()
+    pagination_class = DefaultPagination
 
 
 class PetViewSet(viewsets.ModelViewSet):
     serializer_class = PetSerializer
     queryset = Pet.objects.all()
+    pagination_class = DefaultPagination
 
     def list(self, request, *args, **kwargs):
         self.serializer_class = PetListSerializer
