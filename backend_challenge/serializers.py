@@ -8,7 +8,7 @@ class PersonSerializer(ModelSerializer):
 
     class Meta:
         model = Person
-        fields = ('id', 'name', 'resource_uri',)
+        fields = ('id', 'name', 'resource_uri')
 
 
 class PetSerializer(ModelSerializer):
@@ -16,7 +16,7 @@ class PetSerializer(ModelSerializer):
 
     class Meta:
         model = Pet
-        fields = ('id', 'name', 'resource_uri', 'person',)
+        fields = ('id', 'name', 'resource_uri', 'person')
 
 
 class PetListSerializer(PetSerializer):
