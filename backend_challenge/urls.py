@@ -17,20 +17,23 @@ Including another URLconf
 from django.urls import path, include
 from rest_framework_nested import routers
 
+from rest_framework_simplejwt import views as jwt_views
+
 from .views import PersonViewSet, PetViewSet
 
 
 app_name = 'backend_challenge'
 
 
-persons_router = routers.DefaultRouter(trailing_slash=False)
-persons_router.register(r'person', PersonViewSet)
+person_router = routers.DefaultRouter(trailing_slash=False)
+person_router.register(r'person', PersonViewSet)
 
-pets_router = routers.DefaultRouter(trailing_slash=False)
-pets_router.register(r'pet', PetViewSet)
+pet_router = routers.DefaultRouter(trailing_slash=False)
+pet_router.register(r'pet', PetViewSet)
 
 
 urlpatterns = [
-    path('', include(persons_router.urls)),
-    path('', include(pets_router.urls)),
+    path('', include(person_router.urls)),
+    path('', include(pet_router.urls)),
+    path('auth', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
 ]

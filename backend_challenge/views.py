@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Person, Pet
 from .serializers import PersonSerializer, PetSerializer, PetListSerializer
@@ -23,12 +24,14 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     queryset = Person.objects.all()
     pagination_class = DefaultPagination
+    permission_classes = (IsAuthenticated,)
 
 
 class PetViewSet(viewsets.ModelViewSet):
     serializer_class = PetSerializer
     queryset = Pet.objects.all()
     pagination_class = DefaultPagination
+    permission_classes = (IsAuthenticated,)
 
     def list(self, request, *args, **kwargs):
         self.serializer_class = PetListSerializer
