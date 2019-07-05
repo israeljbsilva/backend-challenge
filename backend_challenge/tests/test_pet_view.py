@@ -2,22 +2,11 @@ import json
 
 from http import HTTPStatus
 
-from django.contrib.auth.models import User
-
 
 RESOURCE_PATH = '/api/v1'
 
 
-def test_should_create_pet(customer_client, person):
-    user = User.objects.create_user(username='test', email='user@foo.com', password='test')
-    user.is_active = True
-    user.is_superuser = True
-    user.save()
-
-    response_auth = customer_client.post(f'{RESOURCE_PATH}/auth', data={'username': 'test', 'password': "test"})
-    content_auth = json.loads(response_auth.content.decode())
-    token = content_auth["access"]
-
+def test_should_create_pet(customer_client, person, create_token):
     # GIVEN
     pet_data = {
         'name': 'Fred',
@@ -27,7 +16,7 @@ def test_should_create_pet(customer_client, person):
     # WHEN
     response = customer_client.post(
         f'{RESOURCE_PATH}/pet', data=json.dumps(pet_data), content_type='application/json',
-        HTTP_AUTHORIZATION=f'Bearer {token}')
+        HTTP_AUTHORIZATION=f'Bearer {create_token}')
 
     # THEN
     assert response.status_code == HTTPStatus.CREATED
@@ -39,16 +28,7 @@ def test_should_create_pet(customer_client, person):
     assert content.get('person') == person.id
 
 
-def test_should_not_create_name_pet(customer_client, person):
-    user = User.objects.create_user(username='test', email='user@foo.com', password='test')
-    user.is_active = True
-    user.is_superuser = True
-    user.save()
-
-    response_auth = customer_client.post(f'{RESOURCE_PATH}/auth', data={'username': 'test', 'password': "test"})
-    content_auth = json.loads(response_auth.content.decode())
-    token = content_auth["access"]
-
+def test_should_not_create_name_pet(customer_client, person, create_token):
     # GIVEN
     pet_data = {
         'person': person.id
@@ -57,7 +37,7 @@ def test_should_not_create_name_pet(customer_client, person):
     # WHEN
     response = customer_client.post(
         f'{RESOURCE_PATH}/pet', data=json.dumps(pet_data), content_type='application/json',
-        HTTP_AUTHORIZATION=f'Bearer {token}')
+        HTTP_AUTHORIZATION=f'Bearer {create_token}')
 
     # THEN
     assert response.status_code == HTTPStatus.BAD_REQUEST
@@ -66,16 +46,7 @@ def test_should_not_create_name_pet(customer_client, person):
     assert content == {'name': ['This field is required.']}
 
 
-def test_should_not_create_pet_with_invalid_person(customer_client):
-    user = User.objects.create_user(username='test', email='user@foo.com', password='test')
-    user.is_active = True
-    user.is_superuser = True
-    user.save()
-
-    response_auth = customer_client.post(f'{RESOURCE_PATH}/auth', data={'username': 'test', 'password': "test"})
-    content_auth = json.loads(response_auth.content.decode())
-    token = content_auth["access"]
-
+def test_should_not_create_pet_with_invalid_person(customer_client, create_token):
     # GIVEN
     pet_data = {
         'name': 'Fred',
@@ -85,7 +56,7 @@ def test_should_not_create_pet_with_invalid_person(customer_client):
     # WHEN
     response = customer_client.post(
         f'{RESOURCE_PATH}/pet', data=json.dumps(pet_data), content_type='application/json',
-        HTTP_AUTHORIZATION=f'Bearer {token}')
+        HTTP_AUTHORIZATION=f'Bearer {create_token}')
 
     # THEN
     assert response.status_code == HTTPStatus.BAD_REQUEST
@@ -94,27 +65,18 @@ def test_should_not_create_pet_with_invalid_person(customer_client):
     assert content.get('person')[0] == 'Invalid pk "0" - object does not exist.'
 
 
-def test_should_list_pet(customer_client, person):
-    user = User.objects.create_user(username='test', email='user@foo.com', password='test')
-    user.is_active = True
-    user.is_superuser = True
-    user.save()
-
-    response_auth = customer_client.post(f'{RESOURCE_PATH}/auth', data={'username': 'test', 'password': "test"})
-    content_auth = json.loads(response_auth.content.decode())
-    token = content_auth["access"]
-
+def test_should_list_pet(customer_client, person, create_token):
     # GIVEN
     pet_data = {
         'name': 'Fred',
         'person': person.id
     }
     customer_client.post(f'{RESOURCE_PATH}/pet', data=json.dumps(pet_data), content_type='application/json',
-                         HTTP_AUTHORIZATION=f'Bearer {token}')
+                         HTTP_AUTHORIZATION=f'Bearer {create_token}')
 
     # WHEN
     response = customer_client.get(f'{RESOURCE_PATH}/pet', content_type='application/json',
-                                   HTTP_AUTHORIZATION=f'Bearer {token}')
+                                   HTTP_AUTHORIZATION=f'Bearer {create_token}')
 
     # THEN
     assert response.status_code == HTTPStatus.OK
@@ -133,27 +95,18 @@ def test_should_list_pet(customer_client, person):
     }
 
 
-def test_should_retrieve_pet(customer_client, person):
-    user = User.objects.create_user(username='test', email='user@foo.com', password='test')
-    user.is_active = True
-    user.is_superuser = True
-    user.save()
-
-    response_auth = customer_client.post(f'{RESOURCE_PATH}/auth', data={'username': 'test', 'password': "test"})
-    content_auth = json.loads(response_auth.content.decode())
-    token = content_auth["access"]
-
+def test_should_retrieve_pet(customer_client, person, create_token):
     # GIVEN
     pet_data = {
         'name': 'Fred',
         'person': person.id
     }
     customer_client.post(f'{RESOURCE_PATH}/pet', data=json.dumps(pet_data), content_type='application/json',
-                         HTTP_AUTHORIZATION=f'Bearer {token}')
+                         HTTP_AUTHORIZATION=f'Bearer {create_token}')
 
     # WHEN
     response = customer_client.get(f'{RESOURCE_PATH}/pet/1', content_type='application/json',
-                                   HTTP_AUTHORIZATION=f'Bearer {token}')
+                                   HTTP_AUTHORIZATION=f'Bearer {create_token}')
 
     # THEN
     assert response.status_code == HTTPStatus.OK

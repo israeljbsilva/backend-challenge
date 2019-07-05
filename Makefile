@@ -9,7 +9,7 @@ VENV_NAME := $(PROJECT_NAME)-$(PYTHON_VERSION)
 	pip install pip --upgrade
 
 setup-dev: .pip
-	$(PIP) requirements/base.txt
+	$(PIP) requirements.txt
 
 .create-venv:
 	pyenv install -s $(PYTHON_VERSION)
