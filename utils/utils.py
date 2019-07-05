@@ -2,7 +2,7 @@ from rest_framework import exceptions
 from rest_framework.views import exception_handler
 
 
-def custom_exception_handler(exc, context):
+def custom_exception_handler(exc, context):  # pragma: no cover
     """ Overriding Django rest framework's custom exception """
     response = exception_handler(exc, context)
 
